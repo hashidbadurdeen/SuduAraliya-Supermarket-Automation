@@ -1,0 +1,106 @@
+// C++ program to illustrate If statement 
+#include <iostream>
+using namespace std;
+ 
+int main () {
+   // local variable declaration:
+   int a = 10;
+ 
+   // check the boolean condition
+   if( a < 20 ) {
+      // if condition is true then print the following
+      cout << "a is less than 20;" << endl;
+   }
+   cout << "value of a is : " << a << endl;
+ 
+}
+
+
+// C++ program to illustrate If else statement
+#include <iostream>
+using namespace std;
+ 
+int main () {
+   // local variable declaration:
+   int a = 100;
+ 
+   // check the boolean condition
+   if( a < 20 ) {
+      // if condition is true then print the following
+      cout << "a is less than 20;" << endl;
+   } else {
+      // if condition is false then print the following
+      cout << "a is not less than 20;" << endl;
+   }
+   cout << "value of a is : " << a << endl;
+ 
+}
+
+
+// C++ program to illustrate Nested if else statement
+#include <iostream>
+using namespace std;
+ 
+int main () {
+   // local variable declaration:
+   int a = 100;
+   int b = 200;
+ 
+   // check the boolean condition
+   if( a == 100 ) {
+      // if condition is true then check the following
+      if( b == 200 ) {
+         // if condition is true then print the following
+         cout << "Value of a is 100 and b is 200" << endl;
+      }
+   }
+   cout << "Exact value of a is : " << a << endl;
+   cout << "Exact value of b is : " << b << endl;
+ 
+}
+
+
+// C++ program to illustrate Switch Case statement
+#include <iostream>
+using namespace std;
+
+int main(){
+	int op;
+	cout << "Insert an Integer:";
+	cin >> op;
+
+	switch (op) {
+
+	case 1:
+		cout << "Monday" << endl;
+		break;
+	case 2:
+		cout << "Tuesday" << endl;
+		break;
+	case 3:
+		cout << "Wednesday" << endl;
+		break;
+	case 4:
+		cout << "Thursday" << endl;
+		break;
+	case 5:
+		cout << "Friday" << endl;
+		break;
+		
+	default:
+		cout << "Sorry!! Invalid Number!" << endl;
+}
+}
+
+// C++ program to illustrate Conditional Operator statement
+#include <iostream>
+using namespace std;
+ 
+int main () {
+   // Local variable declaration:
+   int x, y = 10;
+
+   x = (y < 10) ? 30 : 40;
+   cout << "value of x: " << x << endl;
+ 
+}

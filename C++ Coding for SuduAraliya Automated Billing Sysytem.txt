@@ -1,0 +1,466 @@
+//**HEADER**//
+#include<fstream>
+#include<conio.h>
+#include<string>
+#include<iomanip>
+#include<iostream>
+
+using namespace std;
+
+
+//**FUNCTION PROTOTYPE//
+void login();
+void home_screen();
+void save_product();
+void display_record(int num);
+void product_menu();
+void place_order();
+void help();
+void exit();
+
+//** MAIN FUNCTION**//
+int main()
+{
+
+	system("COLOR F0");
+	login();
+
+	return 0;
+}
+
+
+//**STRUCTURE**//
+struct product
+
+{
+	int product_number;
+	char product_name[50];
+	float product_price, product_quantity, tax, product_discount;
+
+public:
+
+
+	//**FUNCTION DEFINITION BELOW**//
+
+	//**create product**//
+	void create_product()
+	{
+		cout << endl << "Please Enter The Product Number: ";
+		cin >> product_number;
+		cout << endl << "Please Enter The Name of The Product: ";
+		cin.ignore();
+		cin.getline(product_name, 50);
+		cout << endl << "Please Enter The Price(Rs) of The Product: ";
+		cin >> product_price;
+		cout << endl << "Please Enter The Discount (%): ";
+		cin >> product_discount;
+	}
+
+	//**display product**/
+	void show_product()
+	{
+		cout << endl << "Product #: " << product_number;
+		cout << endl << "Product Name: " << product_name;
+		cout << endl << "Product Price: " << product_price;
+		cout << endl << "Discount : " << product_discount;
+	}
+
+	int getProduct()
+	{
+		return product_number;
+	}
+
+	float getPrice()
+	{
+		return product_price;
+	}
+
+	char* getName()
+	{
+		return product_name;
+	}
+
+	float getDiscount()
+	{
+		return product_discount;
+	}
+};
+
+fstream fp;
+product produc;
+
+//**create product to save in databse.dat**/
+void save_product()
+{
+	int opt;
+	fp.open("database.dat", ios::out | ios::app);
+	produc.create_product();
+	fp.write((char*)&produc, sizeof(product));
+	fp.close();
+	cout << endl << endl << "The Product Has Been Sucessfully Created..." << endl;
+	cout << "\n" << endl;
+	cout << " Press 0 for homepage ";
+	cin >> opt;
+
+	if (opt == 0)
+	{
+		system("cls");
+		return home_screen();
+	}
+
+	else
+	{
+		cout << "Invalid input" << endl;
+
+	}
+
+
+	getchar();
+}
+
+
+//**display product from databse.dat**//
+void display_record(int num)
+{
+	int opt;
+	bool found = false;
+	fp.open("database.dat", ios::in);
+	while (fp.read((char*)&produc, sizeof(product)))
+	{
+		if (produc.getProduct() == num)
+		{
+			system("cls");
+			produc.show_product();
+			found = true;
+		}
+	}
+
+	fp.close();
+	if (found == false)
+		cout << "\n\n \t No record found" << endl;
+	cout << "\n" << endl;
+	cout << " Press 0 for homepage ";
+	cin >> opt;
+
+	if (opt == 0)
+	{
+		system("cls");
+		return home_screen();
+	}
+
+	else
+	{
+		cout << "Invalid input" << endl;
+
+	}
+	getchar();
+}
+
+
+//**list product**/
+void product_menu()
+{
+	system("cls");
+	fp.open("database.dat", ios::in);
+
+	cout << endl << endl << "\t\t-----PRODUCT CALCULATION & LISTS-----\n\n";
+	cout << "----------------------------------------------------------------\n";
+	cout << "P.NO.\t\tNAME\t\t\tPRICE(RS)\n";
+	cout << "----------------------------------------------------------------\n";
+	while (fp.read((char*)&produc, sizeof(product)))
+	{
+		cout << produc.getProduct() << "\t\t" << produc.getName() << "\t\t\t" << produc.getPrice() << endl;
+	}
+	fp.close();
+}
+
+//**calculation**//
+void place_order()
+{
+	int order_arr[50], quan[50], c = 0, opt;
+	float amt, damt, total = 0;
+	char ch = 'Y';
+
+	product_menu();
+	cout << "\n";
+	cout << "\n----------------------------------------------------------------";
+	cout << "\n\t\t PLACE YOUR ORDER BELOW";
+	cout << "\n----------------------------------------------------------------\n";
+	do
+	{
+		cout << "\n\nEnter The Product No. : ";
+		cin >> order_arr[c];
+		cout << "\nQuantity: ";
+		cin >> quan[c];
+		c++;
+		cout << "\nDo You Want To Order Another Product ? (y/n)";
+		cin >> ch;
+	} while (ch == 'y' || ch == 'Y');
+	cout << "\n\nThank You...";
+	getchar();
+	system("cls");
+	cout << "\t========================================================================" << endl;
+	cout << "\n";
+	cout << "\t---------------------_ _ _ _ SUDU ARALIYA_ _ _ _ _ -------------------" << endl;
+	cout << "\t\t_ _ _ _ _ _ _ _ _ _ _ SUPER MART_ _ _ _ _ _ _ _ _ _ _" << endl;
+	cout << "\n";
+	cout << "\t\t\tNo 101  Colombo - Hanwella Low Level Rd, Kaduwela	" << endl;
+	cout << "\t\t\t\tTEL # 0112 500000 / 0114 000000" << endl;
+	cout << "\n";
+	cout << "\t=======================================================================" << endl;
+	cout << "\n";
+	cout << "\t********************************INVOICE********************************\n";
+	cout << "\n\tP.No.\tP.Name\tQuantity \tPrice \tAmount \tAmount after discount\n";
+	for (int x = 0; x <= c; ++x)
+	{
+		fp.open("database.dat", ios::in);
+		fp.read((char*)&produc, sizeof(product));
+		while (!fp.eof())
+		{
+			if (produc.getProduct() == order_arr[x])
+			{
+				amt = produc.getPrice()*quan[x];
+				damt = amt - (amt*produc.getDiscount() / 100);
+				cout << "\n\t" << order_arr[x] << "\t" << produc.getName() << "\t" << quan[x] << "\t" << produc.getPrice() << "\t" << amt << "\t" << damt;
+				total += damt;
+			}
+			fp.read((char*)&produc, sizeof(product));
+		}
+		fp.close();
+	}
+	cout << "\n";
+	cout << "\n\t---------------------------------------------------------------------" << endl;
+	cout << "\n\t\t\tSUBTOTAL(Rs) = " << total << "/=";
+	cout << "\n";
+	cout << "\t-----------------------------------------------------------------------" << endl;
+	cout << "\n\t\t\t\tThank You Come Again" << endl;
+	cout << "\n";
+	cout << "\tDear Customer," << endl;
+	cout << "\t\tPlease note that food items, Pharmaceuticals and Sterile" << endl;
+	cout << "\t\tMedical devices will not be accepted as return or exchange." << endl;
+	//getchar();
+
+	cout << "\n \n" << endl;
+	cout << "Press 0 for home page ";
+	cin >> opt;
+
+	if (opt == 0)
+	{
+		system("cls");
+		return home_screen();
+	}
+
+	else
+	{
+		cout << "Invalid input" << endl;
+
+	}
+}
+
+
+//use the below statement to reset the databese if required.
+//void reset() 
+//{
+//if (remove("database.dat") != 0)
+//perror("Error deleting file");
+//else
+//puts("File successfully deleted");
+//}
+
+
+//**login to the system**//
+void login()
+{
+	string user, pass, username1 = "admin", password1 = "admin123", username2 = "user", password2 = "user123";
+	cout << "\n";
+	cout << "\t========================================================================" << endl;
+	cout << "\n";
+	cout << "\t---------------------_ _ _ _ SUDU ARALIYA_ _ _ _ _ -------------------" << endl;
+	cout << "\t\t_ _ _ _ _ _ _ _ _ _ _ SUPER MART_ _ _ _ _ _ _ _ _ _ _" << endl;
+	cout << "\n";
+	cout << "\t\t\tNo 101  Colombo - Hanwella Low Level Rd, Kaduwela	" << endl;
+	cout << "\t\t\t\tTEL # 0112 500000 / 0114 000000" << endl;
+	cout << "\n";
+	cout << "\t=======================================================================" << endl;
+	cout << "\n";
+
+
+	cout << "\tEnter Username: ";
+	cin >> user;
+
+	if (user == username1)
+	{
+		cout << "\n";
+		cout << "\tEnter Password: ";
+		cin >> pass;
+
+		if (pass == password1)
+		{
+			cout << "\n";
+			cout << "\t\t\tLogin successfully!" << endl << endl;
+			system("pause");
+			system("cls");
+			return home_screen();
+		}
+		else
+		{
+			cout << "\n";
+			cout << "\t\t\tIncorrect password!" << endl << endl;
+		}
+	}
+	else if (user == username2)
+	{
+		cout << "\n";
+		cout << "\tEnter Password: ";
+		cin >> pass;
+
+		if (pass == password2)
+		{
+			cout << "\n";
+			cout << "\t\t\tLogin successfully!" << endl;
+			system("pause");
+			system("cls");
+			return home_screen();
+		}
+		else
+		{
+			cout << "\n";
+			cout << "\t\t\tIncorrect password!" << endl << endl;
+		}
+	}
+	else
+	{
+		cout << "\n";
+		cout << "\t\t\tIncorrect username" << endl << endl;
+	}
+
+}
+
+//**home screem interface**//
+void home_screen()
+{
+	system("cls");
+	int opt;
+	cout << "\n";
+	cout << "\t========================================================================" << endl;
+	cout << "\n";
+	cout << "\t---------------------_ _ _ _ SUDU ARALIYA_ _ _ _ _ -------------------" << endl;
+	cout << "\t\t_ _ _ _ _ _ _ _ _ _ _ SUPER MART_ _ _ _ _ _ _ _ _ _ _" << endl;
+	cout << "\n";
+	cout << "\t\t\tNo 101  Colombo - Hanwella Low Level Rd, Kaduwela	" << endl;
+	cout << "\t\t\t\tTEL # 0112 500000 / 0114 000000" << endl;
+	cout << "\n";
+	cout << "\t=======================================================================" << endl;
+	cout << "\n";
+	cout << "\t\t\t-----CHOOSE AN OPTION BELOW-----\n";
+	cout << "\n\n";
+	cout << "\t\t1: ADD ITEMS" << endl;
+	cout << "\n";
+	cout << "\t\t2: DISPLAY ITEMS " << endl;
+	cout << "\n";
+	cout << "\t\t3: CALCULATE BILL " << endl;
+	cout << "\n";
+	cout << "\t\t4: HELP" << endl;
+	cout << "\n";
+	cout << "\t\t5: EXIT" << endl;
+	cout << "\n";
+	cout << " \t\t Enter your option: ";
+
+	cin >> opt;
+	switch (opt)
+	{
+	case 1:
+		system("cls");
+		return save_product();
+		break;
+	case 2:
+		int num;
+		system("cls");
+		cout << "\n\n\tPlease Enter The Product Number: ";
+		cin >> num;
+		display_record(num);
+		break;
+	case 3:
+		system("cls");
+		return place_order();
+		break;
+	case 4:
+		system("cls");
+		return help();
+		break;
+	case 5:
+		system("cls");
+		return exit();
+		break;
+
+	default:
+		system("cls");
+		cout << "Ivalid input" << endl;
+		system("pause");
+		return home_screen();
+	}
+
+}
+
+//**guidelines**//
+void help()
+{
+	int opt;
+	cout << "\t\t*** Guidelines For How To Use The System ***" << endl;
+	cout << "\n\n";
+	cout << "1. Press 1 to add items. Which allows admin to add new products to the system. " << endl;
+	cout << "\n-------------------------------------------------------------------------------------------------" << endl;
+	cout << "2. Press 2 to display items. Input the product number and the system will display the product. " << endl;
+	cout << "\n-------------------------------------------------------------------------------------------------" << endl;
+	cout << "3. Press 3 to calculate. List all the products, select the neccessary products and calculate them. " << endl;
+	cout << "\n-------------------------------------------------------------------------------------------------" << endl;
+	cout << "4. Press 4 for guidelines. Helps to understand the system. " << endl;
+	cout << "\n-------------------------------------------------------------------------------------------------" << endl;
+	cout << "5. Press 5 to exit. Shutdown the complete system. " << endl;
+	cout << "\n-------------------------------------------------------------------------------------------------" << endl;
+	cout << "\n \n" << endl;
+	cout << "Press 0 for home page ";
+	cin >> opt;
+
+	if (opt == 0)
+	{
+		system("cls");
+		return home_screen();
+	}
+
+	else
+	{
+		cout << "Invalid input" << endl;
+
+	}
+}
+
+
+//**shutdown the complete system**//
+void exit()
+{
+	char choice;
+
+	cout << "ARE YOU SURE, YOU WANT TO EXIT (Y/N)?" << endl;
+	cin >> choice;
+
+	if ((choice == 'Y') || (choice == 'y'))
+	{
+		system("cls");
+		cout << "************************** THANKS **************************************" << endl;
+		exit(0);
+	}
+
+	else if ((choice == 'N') || (choice == 'n'))
+	{
+		return home_screen();
+	}
+
+	else
+	{
+		system("cls");
+		cout << "Invalid Option !" << endl;
+		system("pause");
+	}
+
+}
